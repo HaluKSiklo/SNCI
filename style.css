@@ -1,0 +1,10 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+#mindText {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
