@@ -83,23 +83,35 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 
     // =============== ループ ==================
+    // =============== ループ (改良版) ==================
     let t = 0;
+    const MAX_DATA_POINTS = 100; // グラフに表示する最大点数
 
     function loop() {
         const stim = world.observe();
         agents.forEach(a => a.step(stim));
 
         data.labels.push(t++);
+        
+        // 古いデータを削除してパフォーマンスを維持
+        if (data.labels.length > MAX_DATA_POINTS) {
+            data.labels.shift();
+        }
 
         agents.forEach((a, i) => {
+            const dataset = data.datasets[i * DIM + d]; // ※dのループ内
+            // 実際の実装ではネストしたループ内で処理
             for (let d = 0; d < DIM; d++) {
-                data.datasets[i * DIM + d].data.push(a.internal[d]);
+                const targetDataset = data.datasets[i * DIM + d];
+                targetDataset.data.push(a.internal[d]);
+                if (targetDataset.data.length > MAX_DATA_POINTS) {
+                    targetDataset.data.shift();
+                }
             }
         });
 
-        chart.update();
+        chart.update('none'); // アニメーションなしで更新すると動作が軽くなります
         requestAnimationFrame(loop);
     }
-
-    loop();
+    
 });
